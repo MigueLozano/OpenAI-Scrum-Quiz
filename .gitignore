@@ -41,4 +41,4 @@ testem.log
 .DS_Store
 Thumbs.db
 
-.application-properties
+./src/app/constants/environment.ts
