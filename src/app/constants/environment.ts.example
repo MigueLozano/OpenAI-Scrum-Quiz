@@ -1,3 +1,4 @@
 export const environment: any = {
   gptKey: 'abc123',
+  model: 'gpt-4-turbo',
 }

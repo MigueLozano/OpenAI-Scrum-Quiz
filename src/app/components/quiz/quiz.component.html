@@ -4,24 +4,30 @@
     <!-- Text box -->
     <div class="h-fit bg-slate-400 m-auto p-3 rounded-md mb-4">
       <span class="font-sans text-lg">
-        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        {{ mainText }}
       </span>
     </div>
 
     @for(option of options; track option) {
-    <div class="cursor-pointer hover:shadow-md w-full h-fit bg-slate-300 hover:bg-green-300 duration-200 m-auto p-3 rounded-md">
+    <div (click)="pickedAnswer(option)"
+      class="cursor-pointer hover:shadow-md w-full h-fit bg-slate-300 hover:bg-green-300 duration-200 m-auto p-3 rounded-md">
       <span class="font-sans text-lg">
-        {{ option }}
-      </span>
-    </div>
-    } @empty {
-    <div class="w-full h-fit bg-slate-300 m-auto p-3 rounded-md">
-      <span class="font-sans text-lg">
-        There are no options
+        {{ option.text }}
       </span>
     </div>
     }
 
+    @if(debug) {
+    <p class="whitespace-pre">
+    Prompt: {{ prompt }}
+    </p>
+    <p class="whitespace-pre">
+    Response: {{ response }}
+    </p>
+    }
   </div>
 
+
+
 </div>
+
