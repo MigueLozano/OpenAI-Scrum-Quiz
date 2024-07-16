@@ -41,7 +41,6 @@ export class QuizComponent implements OnInit {
 
   ngOnInit(): void {
     this.getFirstQuestion();
-    //this.buildFirstQuestionPrompt();
   }
 
   pickedAnswer(option: Option) {
@@ -75,12 +74,19 @@ export class QuizComponent implements OnInit {
     const fourthOptStart = response.indexOf('d) ');
 
     const question = response.substring(questionStart + 14, firstOptStart);
-    const firstOpt: Option = { index: 0, text: response.substring(firstOptStart + 3, secondOptStart - 1), correct: true };
-    const secondOpt: Option = { index: 0, text: response.substring(secondOptStart + 3, thirdOptStart -1), correct: false };
-    const thirdOpt: Option = { index: 0, text: response.substring(thirdOptStart + 3, fourthOptStart -1), correct: false };
-    const fourthOpt: Option = { index: 0, text: response.substring(fourthOptStart + 3), correct: false };
-
-    const options = [firstOpt, secondOpt, thirdOpt, fourthOpt];
+    const options: Option[] = [
+      { index: 0, text: response.substring(firstOptStart + 3, secondOptStart - 1), correct: false },
+      { index: 0, text: response.substring(secondOptStart + 3, thirdOptStart -1), correct: false },
+      { index: 0, text: response.substring(thirdOptStart + 3, fourthOptStart -1), correct: false },
+      { index: 0, text: response.substring(fourthOptStart + 3), correct: false },
+    ];
+    for(let i = 0; i < options.length; i++) {
+      const option = options[i];
+      if(option.text.includes('*')) {
+        option.correct = true;
+        option.text = option.text.replaceAll('*', '');
+      }
+    }
     this.shuffle(options);
 
     if(feedbackStart >= 0 && !this.pickedOption?.correct) {
@@ -110,7 +116,7 @@ export class QuizComponent implements OnInit {
   }
 
   buildPrompt(option: Option): string {
-    let prompt = 'The question was: ';
+    let prompt = 'Act as a Scrum coach. The user is answering a multiple choice question. The question was: ';
     prompt += '"' + this.mainText + '"\n';
 
     prompt += 'The user answered the question ';
@@ -124,50 +130,29 @@ export class QuizComponent implements OnInit {
       prompt += '"' + option.text + '"\n';
       prompt += 'The right answer was ';
       prompt += '"' + correctOpt.text + '"\n\n';
-      prompt += 'Provide sufficient feedback on why this answer is incorrect while hinting towards the correct option. Do not mention the answer was incorrect\n';
-      //prompt += 'Generate the same question but worded more simply\n';
-      prompt += 'Generate a similar but easier question';
+      prompt += 'Provide sufficient feedback on why this answer is incorrect while addressing the correct option. Do not mention the answer was incorrect\n';
+      prompt += 'Generate a similar but easier question\n';
     }
-    prompt += 'Provide 4 options, making sure the correct answer is the first one. Make sure it is correct and the other 3 are incorrect';
+    prompt += 'Generate 4 multiple choice options with only one correct option in the first place. ';
+    prompt += 'Make sure the other 3 options are all wrong. ';
+    prompt += 'Mark the correct option by putting a star at the end of it.';
     prompt += '\n\n';
-    prompt += 'Give your answer in this format!:\n';
+    prompt += 'Give your answer exclusively in this format!:\n';
     prompt += '__Fedback__: [[feedback if requested]]\n';
     prompt += '__Question__: [[next question]]\n'
-    prompt += 'a) First option\n';
+    prompt += 'a) Correct option*\n';
     prompt += 'b) Second option\n';
     prompt += 'c) Third option\n';
-    prompt += 'd) Fourth option';
+    prompt += 'd) Fourth option\n\n';
 
-    return prompt;
-  }
+    prompt += 'Here\'s an example for clarity:\n\n';
+    prompt += '__Feedback__: requested feedback\n';
+    prompt += '__Question__: In Scrum, who is reponsible for defining the vision of the product?\n';
+    prompt += 'a) Product Owner*\n';
+    prompt += 'b) Scrum Master\n';
+    prompt += 'c) Development Team\n';
+    prompt += 'd) Stakeholders\n';
 
-  buildPrompt2(option: Option): string {
-    const correctOption: Option = this.options.find(opt => opt.correct)!;
-    let prompt = 'The user answered the question ';
-    prompt += '"' + this.mainText + '" with ';
-    prompt += '"' + option.text + '," which is ';
-    if(!option.correct) {
-      prompt += 'incorrect. The correct answer is ';
-      prompt += '"' + correctOption.text + '." '
-    } else {
-      prompt += 'correct. ';
-    }
-    //prompt += 'It took them <Time> seconds to respond.';
-    prompt += '\n\n';
-
-    if(option.correct) {
-      prompt += 'Generate a more difficult question about Scrum with 4 options, making sure the correct answer is the first one.';
-    } else {
-      prompt += 'Provide feedback on why this answer is incorrect and ask a simpler question about the same topic with 4 options, making sure the correct answer is the first one.';
-    }
-    prompt += '\n\n';
-    prompt += 'Example format:\n';
-    prompt += '__Feedback__: feedback without mentioning the picked answer but explaining it in terms of the right option\n';
-    prompt += '__Question__: What is the primary role of a Scrum Master in a Scrum team?\n';
-    prompt += 'a) First option\n';
-    prompt += 'b) Second option\n';
-    prompt += 'c) Third option\n';
-    prompt += 'd) Fourth option';
 
     return prompt;
   }
