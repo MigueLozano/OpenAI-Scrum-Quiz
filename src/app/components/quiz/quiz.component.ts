@@ -202,13 +202,6 @@ export class QuizComponent implements OnInit {
     this.options = options;
   }
 
-  openFeedbackDialog(feedback: string) {
-    const dialogRef = this.dialog.open(FeedbackDialog, {
-      data: { feedback },
-    });
-
-  }
-
   getOptionColor(option: Option): string {
     if(option.correct) {
       return 'rgb(134 239 172)';
